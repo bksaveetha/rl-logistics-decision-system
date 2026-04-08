@@ -24,4 +24,4 @@ EXPOSE 7860
 ENV PYTHONUNBUFFERED=1
 
 # ================= RUN APP =================
-CMD bash -c "uvicorn app:app --host 0.0.0.0 --port 8000 & streamlit run streamlit_app.py --server.port=7860 --server.address=0.0.0.0"
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
