@@ -22,6 +22,14 @@ def difficulty_from_task(task_id: str) -> int:
 def root():
     return {"status": "ok"}
 
+@app.post("/reset")
+def reset_default():
+    # default task
+    task_id = "easy_day_single_plant"
+    env = PickupEnv(difficulty=difficulty_from_task(task_id), seed=42)
+    envs[task_id] = env
+    return {"observation": env.reset()}
+
 @app.post("/reset/{task_id}")
 def reset(task_id: str):
     env = PickupEnv(difficulty=difficulty_from_task(task_id), seed=42)
