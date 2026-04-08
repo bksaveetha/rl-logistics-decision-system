@@ -4,7 +4,7 @@ import time
 from typing import Dict, Any
 from env.pickup_env import PickupEnv
 
-# ================= CONFIG =================
+
 st.set_page_config(page_title="Pickup Logistics Decision System", layout="wide")
 
 st.title("Pickup Logistics Decision System")
