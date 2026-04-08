@@ -1,11 +1,21 @@
-#  Outbound Pickup Reliability - OpenEnv Project
+---
+title: RL Logistics Decision System
+emoji: 🚚
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_file: streamlit_app.py
+pinned: false
+---
+
+# Outbound Pickup Reliability - OpenEnv Project
 
 ## Problem
 Simulate real-world logistics where manufacturers assign carriers to shipments under uncertainty (delays, no-shows, cost trade-offs).
 
 ---
 
-##  Environment
+## Environment
 
 ### Observation Space
 - time: current simulation time
@@ -18,7 +28,7 @@ Simulate real-world logistics where manufacturers assign carriers to shipments u
 
 ---
 
-##  Objective
+## Objective
 Maximize:
 - on-time delivery
 - reliability
@@ -26,7 +36,7 @@ Maximize:
 
 ---
 
-##  Reward Function
+## Reward Function
 - +100 → On-time delivery
 - -200 → Late delivery
 - -500 → Carrier no-show
@@ -34,7 +44,7 @@ Maximize:
 
 ---
 
-##  Tasks
+## Tasks
 
 | Task | Description |
 |-----|------------|
@@ -44,7 +54,7 @@ Maximize:
 
 ---
 
-##  Evaluation
+## Evaluation
 Graded using:
 - on-time rate
 - cost efficiency
@@ -54,28 +64,49 @@ Score range: 0.0 → 1.0
 
 ---
 
-##  Baseline Agent
+## Baseline Agent
 Rule-based:
 - selects urgent shipments
 - picks most reliable carrier
 
+---
 
+## Automated Mode
+Automated Mode = system plays the simulation using a built-in decision logic (baseline agent).  
+It simulates dispatcher behavior step-by-step for shipment assignment.
 
-## Automated mode
-Automated Mode = system plays the simulation for you using a built-in decision logic (baseline agent)
-Automated Mode = “Auto decision-making system that simulates a dispatcher choosing shipments and carriers step-by-step, It can show as end to end demo of Shipment allotment to the carrier assignment”
+---
 
 ## Control Panel
-In control panel we have "Task Difficulty", "Reset Environment", "Shipment-id", "Carrier-id" which is has unlimitet input which eventually decides the positive and negative reward according to the shipment and carrier status.
+Includes:
+- Task Difficulty
+- Reset Environment
+- Shipment ID
+- Carrier ID  
+
+Used to manually test decisions and observe rewards.
+
+---
 
 ## Reward System
-The action taken on the recommendation basis, So if sometime if priority shipment is alloted then in that case to it can show as the negative/positve reward basis on the carrier shows up or not, if they shows then it will be positve reward, if delayed/did not show up then it will be negative reward marking.
+- Positive reward → successful on-time assignment  
+- Negative reward → delay or carrier no-show  
 
-## Decision log
-You can find the time, shipment id, carrier id, reward, success, The major clarity on the success column where you can see 1 signifies and 0 signifies as unsuccessful.
-## ▶ Run Locally
+---
+
+## Decision Log
+Tracks:
+- time
+- shipment_id
+- carrier_id
+- reward
+- success (1 = success, 0 = failure)
+
+---
+
+## Run Locally
 
 ```bash
 pip install -r requirements.txt
-uvicorn app:app --port 7860 or uvicorn app:app --reload --host 0.0.0.0 --port 7860
+uvicorn app:app --port 7860
 streamlit run streamlit_app.py
