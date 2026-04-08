@@ -1,15 +1,26 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Dict
 from env.pickup_env import PickupEnv
 
 app = FastAPI(title="Pickup OpenEnv API")
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 envs: Dict[str, PickupEnv] = {}
 
 class ActionModel(BaseModel):
     shipment_id: Optional[int] = None
     carrier_id: Optional[int] = None
+
 
 def difficulty_from_task(task_id: str) -> int:
     if "hard" in task_id:
@@ -18,23 +29,39 @@ def difficulty_from_task(task_id: str) -> int:
         return 1
     return 0
 
+
 @app.get("/")
 def root():
     return {"status": "ok"}
 
+
+
 @app.post("/reset")
-def reset_default():
-    # default task
-    task_id = "easy_day_single_plant"
+async def reset_default(request: Request):
+    try:
+        body = await request.json()
+    except:
+        body = {}
+
+    task_id = body.get("task_id", "easy_day_single_plant")
+
     env = PickupEnv(difficulty=difficulty_from_task(task_id), seed=42)
     envs[task_id] = env
-    return {"observation": env.reset()}
+
+    return {
+        "observation": env.reset()
+    }
+
 
 @app.post("/reset/{task_id}")
 def reset(task_id: str):
     env = PickupEnv(difficulty=difficulty_from_task(task_id), seed=42)
     envs[task_id] = env
-    return {"observation": env.reset()}
+
+    return {
+        "observation": env.reset()
+    }
+
 
 @app.post("/step/{task_id}")
 def step(task_id: str, action: ActionModel):
@@ -49,6 +76,7 @@ def step(task_id: str, action: ActionModel):
         "done": done,
         "info": info
     }
+
 
 @app.get("/state/{task_id}")
 def state(task_id: str):
