@@ -1,10 +1,10 @@
-# app.py
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict
 from env.pickup_env import PickupEnv
 
-app = FastAPI(title="Outbound Pickup Reliability OpenEnv")
+app = FastAPI(title="Pickup OpenEnv API")
+
 envs: Dict[str, PickupEnv] = {}
 
 class ActionModel(BaseModel):
@@ -20,7 +20,7 @@ def difficulty_from_task(task_id: str) -> int:
 
 @app.get("/")
 def root():
-    return {"status": "ok", "service": "pickup-openenv"}
+    return {"status": "ok"}
 
 @app.post("/reset/{task_id}")
 def reset(task_id: str):
@@ -32,12 +32,24 @@ def reset(task_id: str):
 def step(task_id: str, action: ActionModel):
     if task_id not in envs:
         raise HTTPException(status_code=404, detail="Task not initialized")
+
     obs, reward, done, info = envs[task_id].step(action.model_dump())
-    return {"observation": obs, "reward": reward, "done": done, "info": info}
+
+    return {
+        "observation": obs,
+        "reward": reward,
+        "done": done,
+        "info": info
+    }
 
 @app.get("/state/{task_id}")
 def state(task_id: str):
     if task_id not in envs:
         raise HTTPException(status_code=404, detail="Task not initialized")
+
     env = envs[task_id]
-    return {"time": env.current_time, "remaining_shipments": len(env.shipments)}
+
+    return {
+        "time": env.current_time,
+        "remaining_shipments": len(env.shipments)
+    }
