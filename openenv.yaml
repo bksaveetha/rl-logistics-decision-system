@@ -1,0 +1,18 @@
+name: outbound-pickup-reliability
+description: Reliable outbound pickup scheduling for manufacturers under uncertain carriers.
+
+tasks:
+  - id: easy_day_single_plant
+    env_params:
+      difficulty: 0
+    grader: graders.pickup_graders.grade_easy
+
+  - id: medium_multi_plant
+    env_params:
+      difficulty: 1
+    grader: graders.pickup_graders.grade_medium
+
+  - id: hard_dynamic_orders
+    env_params:
+      difficulty: 2
+    grader: graders.pickup_graders.grade_hard

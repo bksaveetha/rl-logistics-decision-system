@@ -1,0 +1,10 @@
+fastapi
+numpy
+torch
+pydantic
+pytest
+httpx
+streamlit
+uvicorn
+pandas
+requests
