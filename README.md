@@ -3,7 +3,7 @@ title: RL Logistics Decision System
 colorFrom: blue
 colorTo: indigo
 sdk: docker
-app_file: streamlit_app.py
+app_file: server/app.py
 pinned: false
 tags:
   - openenv
@@ -235,18 +235,21 @@ The UI is designed for demonstration and evaluation purposes.
 ## File Structure
 
 pickup_env/
+│
+├── server/
+│   └── app.py
+│
 ├── env/
 │ └── pickup_env.py
 ├── graders/
 │ └── pickup_graders.py
-├── streamlit_app.py
-├── inference.py
-├── app.py
 ├── openenv.yaml
-├── requirements.txt
-└── Dockerfile
-
-
+├── models.py
+├── client.py
+├── inference.py
+├── Dockerfile
+├── pyproject.toml
+├── uv.lock
 ---
 
 ## Running Locally
@@ -255,10 +258,6 @@ Install dependencies:
 
 pip install -r requirements.txt
 
-
-Run the UI:
-
-streamlit run streamlit_app.py
 
 
 Run inference:
@@ -279,6 +278,95 @@ python inference.py
 
 ---
 
+## API Testing
+
+This environment exposes a REST API compliant with the OpenEnv specification. You can test all endpoints using Postman, curl, or any HTTP client.
+
+Base URL
+https://bkmishra1906-rl-logistics-decision-system.hf.space
+
+1. Reset Environment
+
+Initializes the environment for a given task.
+
+Endpoint: POST /reset/{task_id}
+
+Supported Tasks
+easy_day_single_plant
+medium_multi_plant
+hard_dynamic_orders
+
+Example(Postman\URL)
+
+curl -X POST https://bkmishra1906-rl-logistics-decision-system.hf.space/reset/easy_day_single_plant \
+-H "Content-Type: application/json" \
+-d '{}'
+
+Response:
+{
+  "observation": {
+    "time": 0,
+    "shipments": [...],
+    "carriers": [...]
+  }
+}
+
+2. Take Action (Step)
+
+Assign a carrier to a shipment.
+
+Endpoint:POST /step/{task_id}
+
+Request Body:
+{
+  "shipment_id": 1,
+  "carrier_id": 2
+}
+
+Example:
+curl -X POST https://bkmishra1906-rl-logistics-decision-system.hf.space/step/easy_day_single_plant \
+-H "Content-Type: application/json" \
+-d '{"shipment_id": 1, "carrier_id": 2}'
+
+
+Response:
+{
+  "observation": {...},
+  "reward": 85.0,
+  "done": false,
+  "info": {
+    "status": "assigned"
+  }
+}
+
+
+3. Get Current State
+
+Returns current environment state.
+
+Endpoint: GET /state/{task_id}
+
+Example:
+curl https://bkmishra1906-rl-logistics-decision-system.hf.space/state/easy_day_single_plant
+
+Response:
+{
+  "time": 5,
+  "remaining_shipments": 10
+}
+
+4. Default Reset (No Task)
+
+Resets environment with default configuration.
+POST /reset
+
+Important Notes
+/reset must always be called before /step
+/step requires JSON body (otherwise 422 error)
+/state is a GET endpoint (POST will return 405)
+Hard mode may not immediately allow assignments due to dynamic shipment readiness
+
+
 ## Conclusion
 
 This environment provides a practical benchmark for evaluating decision-making agents in logistics systems. It bridges the gap between simulation environments and real-world operational challenges by incorporating uncertainty, constraints, and trade-offs.
@@ -289,4 +377,6 @@ It is suitable for:
 - decision intelligence systems
 - operations optimization
 - benchmarking agent performance
+
+
 
