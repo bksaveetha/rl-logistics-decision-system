@@ -16,6 +16,8 @@ COPY . /app
 # ================= INSTALL PYTHON DEPENDENCIES =================
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
+RUN pip install uv
+RUN uv sync
 
 # ================= EXPOSE PORT =================
 EXPOSE 7860
@@ -24,4 +26,4 @@ EXPOSE 7860
 ENV PYTHONUNBUFFERED=1
 
 # ================= RUN APP =================
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+MD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
