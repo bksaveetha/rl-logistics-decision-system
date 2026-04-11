@@ -8,3 +8,5 @@ streamlit
 uvicorn
 pandas
 requests
+openai
+openenv-core>=0.2.0

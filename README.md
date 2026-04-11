@@ -1,15 +1,11 @@
 ---
 title: RL Logistics Decision System
+emoji: 🚚
 colorFrom: blue
-colorTo: indigo
+colorTo: green
 sdk: docker
 app_file: server/app.py
 pinned: false
-tags:
-  - openenv
-  - reinforcement-learning
-  - logistics
-  - decision-intelligence
 ---
 
 # Outbound Pickup Reliability Environment
