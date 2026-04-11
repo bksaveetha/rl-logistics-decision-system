@@ -88,6 +88,26 @@ def call_llm(obs):
         print(f"[WARN] LLM call failed: {e}")
 
 # ---------------- RUN TASK ---------------- #
+def normalize_score(total_reward):
+    """
+    Convert reward to (0,1) range
+    """
+    # Clamp extreme values
+    if total_reward < -5000:
+        total_reward = -5000
+    if total_reward > 5000:
+        total_reward = 5000
+
+    # Normalize to 0–1
+    score = (total_reward + 5000) / 10000
+
+    # Ensure strictly between (0,1)
+    if score <= 0:
+        score = 0.01
+    if score >= 1:
+        score = 0.99
+
+    return score
 
 def run_task(task_id):
     print(f"[START] task_id={task_id}", flush=True)
@@ -124,7 +144,7 @@ def run_task(task_id):
 
     print(f"[END] task_id={task_id} total_reward={total_reward}", flush=True)
 
-    return total_reward
+    return normalize_score(total_reward)
 
 # ---------------- MAIN ---------------- #
 
